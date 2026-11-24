@@ -20,7 +20,7 @@ body{margin:0;min-height:100vh;font-family:'Rubik','Varela Round',system-ui,sans
 button{font:inherit;color:inherit;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 button:focus-visible{outline:4px solid var(--sky-d);outline-offset:3px}
 .wrap{max-width:640px;margin:0 auto;padding:0 16px 40px}
-header{position:sticky;top:0;z-index:20;background:rgba(255,250,240,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+header{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:rgba(255,250,240,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
 .bar{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center}.bar>*+*{margin-right:10px}
 .brand{flex:1;font-weight:800;font-size:1.05rem}
 .icon-btn{min-width:52px;height:52px;border-radius:18px;border:2px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;padding:0 12px;font-weight:700;font-size:1.05rem}
@@ -129,7 +129,11 @@ h1{font-size:2.1rem;font-size:clamp(1.8rem,7vw,2.5rem);line-height:1.1;margin:22
 <main class="wrap" id="app"></main>
 <canvas id="fx"></canvas>
 <script>
-{
+window.onerror=function(m,src,l,c){var a=document.getElementById('app');if(a)a.innerHTML='<div style="background:#fff6cc;border:3px solid #fbcb22;border-radius:20px;padding:16px;margin-top:20px;font-size:16px;direction:ltr;text-align:left;word-break:break-word"><b style="display:block;direction:rtl;text-align:right;font-size:18px;margin-bottom:8px">אופס, משהו לא נטען 🙈 צלמי את המסך ושלחי</b>'+String(m).replace(/</g,'&lt;')+' (line '+l+':'+c+')</div>'};
+</script>
+<script>
+(function(){
+'use strict';
 // ---------- נתונים מתוך דפי העבודה: "חזרה בטבע – כיתה ג' – חומרים" ----------
 const TOPICS=[
 {id:'materials',title:'ממה זה עשוי?',emoji:'🧱',desc:'חומרים וחפצים',bg:'#fffbeb',bd:'#fcd34d',badge:'חוקרת החומרים',questions:[
@@ -198,7 +202,7 @@ const ALMOST=['כמעט!','ניסיון יפה!','עוד קצת!','את בכיו
 // ---------- שמירה מקומית ----------
 const KEY='young-explorer-v1';
 let save={leaves:0,done:[],muted:false};
-try{const s=JSON.parse(localStorage.getItem(KEY));if(s)save={...save,...s}}catch(e){}
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s)save=Object.assign({},save,s)}catch(e){}
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(save))}catch(e){}};
 
 // ---------- צלילים (Web Audio) ----------
@@ -241,7 +245,7 @@ function home(){
 // ---------- מצב סבב ----------
 let S=null;
 function start(id){
- const topic=id==='all'?{...ALL,questions:TOPICS.flatMap(t=>t.questions)}:TOPICS.find(t=>t.id===id);
+ const topic=id==='all'?Object.assign({},ALL,{questions:TOPICS.reduce((a,t)=>a.concat(t.questions),[])}):TOPICS.find(t=>t.id===id);
  S={topic,queue:topic.questions,idx:0,missed:[],fixing:false,leaves:0};
  newQ();
 }
@@ -316,7 +320,7 @@ function bag(){
 document.getElementById('bagBtn').onclick=bag;
 document.getElementById('muteBtn').onclick=()=>{save.muted=!save.muted;persist();updHeader();snd.tap()};
 updHeader();home();
-}
+})();
 </script>
 </body>
 </html>
